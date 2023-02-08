@@ -50,7 +50,7 @@ export const getBookByParams = Api(
   async () => {
     const ctx = useContext<Context>();
     const { id } = ctx.params;
-    const book = books.find((b) => b.id === Number(id));
+    const book = books.find(b => b.id === Number(id));
     if (!book) {
       ctx.throw(400, 'book not found');
     }
@@ -64,7 +64,7 @@ export const getBookByQuery = Api(
   async () => {
     const ctx = useContext<Context>();
     const { id } = ctx.query;
-    const book = books.find((b) => b.id === Number(id));
+    const book = books.find(b => b.id === Number(id));
     if (!book) {
       ctx.throw(400, 'book not found');
     }
