@@ -15,7 +15,9 @@
     "@midwayjs/koa": "^3.10.6",
     "@midwayjs/rpc": "^3.1.0",
     "@midwayjs/serve": "^3.1.0",
+    "@prisma/client": "^4.10.0",
     "isomorphic-unfetch": "^3.1.0",
+    "prisma": "^4.10.0",
     "vue": "^3.2.25"
   },
   "devDependencies": {
