@@ -9,12 +9,12 @@ let repo = ref(null);
 let bookByQuery = ref(null);
 let bookByParams = ref(null);
 
-getDate().then((res) => (date.value = res));
-fetchGithubStars('midwayjs/midway').then((res) => (repo.value = res));
+getDate().then(res => (date.value = res));
+fetchGithubStars('midwayjs/midway').then(res => (repo.value = res));
 getBookByParams({ params: { id: '1' } }).then(
-  (res) => (bookByParams.value = res)
+  res => (bookByParams.value = res)
 );
-getBookByQuery({ query: { id: '2' } }).then((res) => (bookByQuery.value = res));
+getBookByQuery({ query: { id: '2' } }).then(res => (bookByQuery.value = res));
 // This starter template is using Vue 3 <script setup> SFCs
 // Check out https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup
 </script>
