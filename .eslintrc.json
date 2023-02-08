@@ -1,5 +1,6 @@
 {
-  "extends": ["plugin:vue/vue3-recommended", "./node_modules/mwts/"],
+  "extends": ["./node_modules/mwts"],
+  "plugins": ["plugin:vue/vue3-recommended"],
   "ignorePatterns": [
     "node_modules",
     "dist",
