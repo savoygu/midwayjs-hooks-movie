@@ -1,0 +1,88 @@
+@baseURL=http://localhost:3000
+
+### 电影
+###   获取全部电影
+GET {{baseURL}}/api/movies
+
+###   获取电影
+GET {{baseURL}}/api/movie/4
+
+###   新增电影
+POST {{baseURL}}/api/movie
+Content-Type: application/json
+
+{
+  "args": [
+    {
+      "title": "流浪地球2",
+      "summary": "太阳即将毁灭，人类在地球表面建造出巨大的推进器，寻找新的家园。然而宇宙之路危机四伏，为了拯救地球，流浪地球时代的年轻人再次挺身而出，展开争分夺秒的生死之战。",
+      "poster": "https://img1.doubanio.com/view/photo/s_ratio_poster/public/p2885955777.webp",
+      "doctor": "郭帆",
+      "year": 2023,
+      "country": "中国大陆",
+      "language": "汉语普通话"
+    }
+  ]
+}
+
+###   删除电影
+DELETE {{baseURL}}/api/movie/7
+
+###   更新电影
+PUT {{baseURL}}/api/movie
+Content-Type: application/json
+
+{
+  "args": [
+    {
+      "id": 4,
+      "title": "流浪地球2",
+      "summary": "太阳即将毁灭，人类在地球表面建造出巨大的推进器，寻找新的家园。然而宇宙之路危机四伏，为了拯救地球，流浪地球时代的年轻人再次挺身而出，展开争分夺秒的生死之战。",
+      "poster": "https://img1.doubanio.com/view/photo/s_ratio_poster/public/p2885955777.webp",
+      "doctor": "郭帆",
+      "year": 2023,
+      "country": "中国大陆",
+      "language": "汉语普通话"
+    }
+  ]
+}
+
+
+### 分类
+###   获取全部分类
+GET {{baseURL}}/api/categories
+
+###   获取分类
+GET {{baseURL}}/api/category/3
+
+###   新增分类
+POST {{baseURL}}/api/category
+Content-Type: application/json
+
+{
+  "args": [
+    {
+      "name": "爱情"
+    }
+  ]
+}
+
+###   删除分类
+DELETE {{baseURL}}/api/category/6
+
+###   更新分类
+PUT {{baseURL}}/api/category
+
+{
+  "args": [
+    {
+      "id": 5,
+      "name": "爱情"
+    }
+  ]
+}
+
+
+### 评论
+
+### 用户
