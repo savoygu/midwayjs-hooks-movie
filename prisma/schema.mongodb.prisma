@@ -1,0 +1,74 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  name      String    @unique
+  password  String
+  role      Int       @default(0)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now()) @updatedAt
+  comments  Comment[]
+  replyFrom Reply[]   @relation("ReplyFrom")
+  replyTo   Reply[]   @relation("ReplyTo")
+}
+
+model Movie {
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  title      String
+  summary    String
+  poster     String
+  doctor     String
+  year       Int
+  country    String
+  language   String
+  flash      String?
+  pv         Int       @default(0)
+  category   Category? @relation(fields: [categoryId], references: [id])
+  categoryId String?   @db.ObjectId
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @default(now()) @updatedAt
+  comments   Comment[]
+}
+
+model Category {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  movies    Movie[]
+}
+
+model Comment {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  movie     Movie    @relation(fields: [movieId], references: [id])
+  movieId   String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String   @db.ObjectId
+  reply     Reply[]
+}
+
+model Reply {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  content    String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now()) @updatedAt
+  comment    Comment  @relation(fields: [commentId], references: [id])
+  commentId  String   @db.ObjectId
+  formUser   User     @relation(name: "ReplyFrom", fields: [fromUserId], references: [id])
+  fromUserId String   @db.ObjectId
+  toUser     User     @relation(name: "ReplyTo", fields: [toUserId], references: [id])
+  toUserId   String   @db.ObjectId
+}

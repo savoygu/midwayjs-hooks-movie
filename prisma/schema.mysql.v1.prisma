@@ -1,0 +1,82 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  name      String    @unique
+  password  String
+  role      Int       @default(0)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  comments  Comment[]
+  replyFrom Reply[]   @relation(name: "ReplyFrom")
+  replyTo   Reply[]   @relation(name: "ReplyTo")
+}
+
+model Movie {
+  id         Int       @id @default(autoincrement())
+  title      String
+  summary    String
+  poster     String
+  doctor     String
+  year       Int
+  country    String
+  language   String
+  flash      String?
+  pv         Int       @default(0)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  category   Category? @relation(fields: [categoryId], references: [id])
+  categoryId Int?      @unique
+  comments   Comment[]
+}
+
+model Category {
+  id        Int      @id @default(autoincrement())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  movies    Movie[]
+}
+
+// https://blog.51cto.com/u_15471709/4868573
+model Comment {
+  id        Int      @id @default(autoincrement())
+  content   String // 评论内容
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  movie     Movie    @relation(fields: [movieId], references: [id]) // 电影 Id
+  movieId   Int      @unique
+  user      User     @relation(fields: [userId], references: [id]) // 评论用户 Id
+  userId    Int      @unique
+  reply     Reply[]
+}
+
+model Reply {
+  id         Int       @id @default(autoincrement())
+  content    String
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  comment    Comment   @relation(fields: [commentId], references: [id]) // 根评论 Id
+  commentId  Int
+  replyId    Int // 回复目标 Id，如果 replyType 时 COMMENT，那么 replyId 等于 commentId 如果 replyType 时 REPLY 的话，表示这条回复的父回复
+  replyType  ReplyType @default(COMMENT)
+  formUser   User      @relation(name: "ReplyFrom", fields: [fromUserId], references: [id]) // 回复用户 id
+  fromUserId Int
+  toUser     User      @relation(name: "ReplyTo", fields: [toUserId], references: [id]) // 目标用户 Id
+  toUserId   Int
+}
+
+enum ReplyType {
+  COMMENT
+  REPLY
+}

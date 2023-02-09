@@ -6,26 +6,24 @@ generator client {
 }
 
 datasource db {
-  provider = "mongodb"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  id        Int       @id @default(autoincrement())
   name      String    @unique
   password  String
   role      Int       @default(0)
   createdAt DateTime  @default(now())
-  updatedAt DateTime  @default(now()) @updatedAt
+  updatedAt DateTime  @updatedAt
   comments  Comment[]
-  fromReply Reply[]   @relation("FromReply")
-  toReply   Reply[]   @relation("ToReply")
 }
 
 model Movie {
-  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  id         Int       @id @default(autoincrement())
   title      String
-  summary    String
+  summary    String    @db.LongText
   poster     String
   doctor     String
   year       Int
@@ -33,39 +31,31 @@ model Movie {
   language   String
   flash      String?
   pv         Int       @default(0)
-  category   Category? @relation(fields: [categoryId], references: [id])
-  categoryId String?   @db.ObjectId
   createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @default(now()) @updatedAt
+  updatedAt  DateTime  @updatedAt
+  category   Category? @relation(fields: [categoryId], references: [id])
+  categoryId Int?
   comments   Comment[]
 }
 
 model Category {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  id        Int      @id @default(autoincrement())
   name      String
-  movies    Movie[]
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
+  updatedAt DateTime @updatedAt
+  movies    Movie[]
 }
 
 model Comment {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  movie     Movie    @relation(fields: [movieId], references: [id])
-  user      User     @relation(fields: [userId], references: [id])
-  reply     Reply[]
-  userId    String   @db.ObjectId
-  movieId   String   @db.ObjectId
-  content   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
-}
-
-model Reply {
-  id         String  @id @default(auto()) @map("_id") @db.ObjectId
-  form       User    @relation(name: "FromReply", fields: [fromUserId], references: [id])
-  to         User    @relation(name: "ToReply", fields: [toUserId], references: [id])
-  comment    Comment @relation(fields: [commentId], references: [id])
-  commentId  String  @db.ObjectId
-  fromUserId String  @db.ObjectId
-  toUserId   String  @db.ObjectId
+  id        Int       @id @default(autoincrement())
+  content   String    @db.LongText
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  movie     Movie     @relation(fields: [movieId], references: [id], onDelete: Cascade)
+  movieId   Int
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  parent    Comment?  @relation("ParentChild", fields: [parentId], references: [id], onDelete: Cascade)
+  children  Comment[] @relation("ParentChild")
+  parentId  Int?
 }
