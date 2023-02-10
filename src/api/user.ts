@@ -51,7 +51,7 @@ export const signIn = Api(
     });
 
     if (result.password !== user.password) {
-      // throw ctx.throw(400, 'incorrect password');
+      // ctx.throw(400, 'incorrect password');
       return false;
     }
 

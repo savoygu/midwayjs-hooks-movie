@@ -71,7 +71,7 @@ export const updateComment = Api(
     console.log('FROM updateComment', ctx.session.user);
 
     if (userId !== ctx.session.user?.id) {
-      throw ctx.throw(401, 'no update permission');
+      ctx.throw(401, 'no update permission');
     }
 
     return await prisma.comment.update({
@@ -104,7 +104,7 @@ export const deleteComment = Api(
     console.log('FROM deleteComment', ctx.session.user);
 
     if (userId !== ctx.session.user?.id) {
-      throw ctx.throw(401, 'no delete permission');
+      ctx.throw(401, 'no delete permission');
     }
 
     return await prisma.comment.delete({
