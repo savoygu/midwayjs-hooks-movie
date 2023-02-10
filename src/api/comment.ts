@@ -1,5 +1,6 @@
 import {
   Api,
+  ApiConfig,
   Delete,
   Params,
   Post,
@@ -14,6 +15,18 @@ import { useParams, useParamsId } from './context';
 import { prisma } from './prisma';
 import { Id, IdSchema } from './schema';
 import { COMMENT_SELECT_FIELDS } from './select';
+import { signInRequired } from '../middleware/permission';
+
+export const config: ApiConfig = {
+  middleware: [signInRequired],
+};
+
+const IdsSchema = z.object({
+  movieId: z.string().regex(/^\d+$/),
+  commentId: z.string().regex(/^\d+$/),
+});
+
+type Ids = z.infer<typeof IdsSchema>;
 
 const CommentSchema = z.object({
   content: z.string().min(1),
@@ -32,20 +45,13 @@ export const createComment = Api(
       data: {
         content: comment.content,
         parentId: comment.parentId,
-        userId: Number(ctx.cookies.get('userId') ?? 3), // TODO logged user id
+        userId: ctx.session.user.id,
         movieId,
       },
       select: COMMENT_SELECT_FIELDS,
     });
   }
 );
-
-const IdsSchema = z.object({
-  movieId: z.string().regex(/^\d+$/),
-  commentId: z.string().regex(/^\d+$/),
-});
-
-type Ids = z.infer<typeof IdsSchema>;
 
 export const updateComment = Api(
   Put('/api/movies/:movieId/comments/:commentId'),
@@ -62,9 +68,10 @@ export const updateComment = Api(
       },
     });
 
-    if (userId !== (ctx.cookies.get('userId') ?? 3)) {
-      // TODO logged user id
-      throw ctx.throw(403, 'no update permission');
+    console.log('FROM updateComment', ctx.session.user);
+
+    if (userId !== ctx.session.user?.id) {
+      throw ctx.throw(401, 'no update permission');
     }
 
     return await prisma.comment.update({
@@ -94,9 +101,10 @@ export const deleteComment = Api(
       },
     });
 
-    if (userId !== (ctx.cookies.get('userId') ?? 3)) {
-      // TODO logged user id
-      throw ctx.throw(403, 'no delete permission');
+    console.log('FROM deleteComment', ctx.session.user);
+
+    if (userId !== ctx.session.user?.id) {
+      throw ctx.throw(401, 'no delete permission');
     }
 
     return await prisma.comment.delete({

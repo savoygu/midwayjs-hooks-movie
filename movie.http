@@ -2,6 +2,42 @@
 @contentType=application/json
 @movieId=4
 
+
+### 用户
+
+###  获取所有用户
+GET {{baseURL}}/api/users
+
+###  登录
+POST {{baseURL}}/api/users/signin
+Content-Type: {{contentType}}
+
+{
+  "args": [
+    {
+      "name": "gusaifei",
+      "password": "123456"
+    }
+  ]
+}
+
+###  注册
+POST {{baseURL}}/api/users/signup
+Content-Type: {{contentType}}
+
+{
+  "args": [
+    {
+      "name": "zhangsan",
+      "password": "123123"
+    }
+  ]
+}
+
+###  登出
+POST {{baseURL}}/api/users/signout
+
+
 ### 电影
 ###   获取全部电影
 GET {{baseURL}}/api/movies
@@ -88,7 +124,8 @@ Content-Type: {{contentType}}
 
 ### 评论
 
-###   新增
+###  新增评论
+# @name createComment
 POST {{baseURL}}/api/movies/{{movieId}}/comments
 Content-Type: {{contentType}}
 
@@ -101,8 +138,10 @@ Content-Type: {{contentType}}
   ]
 }
 
-###  更新
-PUT {{baseURL}}/api/movies/{{movieId}}/comments/8
+###  更新评论
+@commentId = {{createComment.response.body.$.id}}
+
+PUT {{baseURL}}/api/movies/{{movieId}}/comments/{{commentId}}
 Content-Type: {{contentType}}
 
 {
@@ -113,4 +152,18 @@ Content-Type: {{contentType}}
   ]
 }
 
-### 用户
+### 删除评论
+DELETE {{baseURL}}/api/movies/{{movieId}}/comments/{{commentId}}
+
+
+### 首页
+
+###   首页展示
+GET {{baseURL}}/api/categories/3/movies
+
+###
+GET {{baseURL}}/api/categories/all/movies
+
+###   搜索电影
+GET {{baseURL}}/api/search/movies
+  ?q=流浪&page=1&size=2&cid=3

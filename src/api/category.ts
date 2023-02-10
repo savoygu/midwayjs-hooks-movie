@@ -1,5 +1,6 @@
 import {
   Api,
+  ApiConfig,
   Delete,
   Get,
   Params,
@@ -12,6 +13,11 @@ import { z } from 'zod';
 import { prisma } from './prisma';
 import { Id, IdSchema } from './schema';
 import { useParamsId } from './context';
+import { adminRequired } from '../middleware/permission';
+
+export const config: ApiConfig = {
+  middleware: [adminRequired],
+};
 
 export const getCategory = Api(
   Get('/api/categories/:id'),

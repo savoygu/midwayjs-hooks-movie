@@ -1,8 +1,9 @@
 <script setup lang="ts">
+import { getSearchMovies } from './api';
 import { updateCategory } from './api/category';
 
 function addMovie() {
-  updateCategory({ id: 4, name: '喜剧 - 1' })
+  getSearchMovies({ query: { q: 'abc' } })
     .then(res => {
       console.log(res);
     })

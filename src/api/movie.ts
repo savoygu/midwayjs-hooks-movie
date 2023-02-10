@@ -2,6 +2,7 @@ import {
   Api,
   Delete,
   Get,
+  Middleware,
   Params,
   Post,
   Put,
@@ -13,6 +14,7 @@ import { prisma } from './prisma';
 import { Id, IdSchema } from './schema';
 import { useParamsId } from './context';
 import { COMMENT_SELECT_FIELDS } from './select';
+import { adminRequired } from '../middleware/permission';
 
 export const getMovie = Api(
   Get('/api/movies/:id'),
@@ -57,9 +59,13 @@ export const getMovie = Api(
   }
 );
 
-export const getMovies = Api(Get('/api/movies'), async () => {
-  return await prisma.movie.findMany();
-});
+export const getMovies = Api(
+  Get('/api/movies'),
+  Middleware(adminRequired),
+  async () => {
+    return await prisma.movie.findMany();
+  }
+);
 
 const MovieSchema = z.object({
   title: z.string().min(1),
@@ -82,6 +88,7 @@ const FullMovieSchema = MovieSchema.merge(
 export const updateMovie = Api(
   Put('/api/movies'),
   Validate(FullMovieSchema),
+  Middleware(adminRequired),
   async (movie: z.infer<typeof FullMovieSchema>) => {
     return await prisma.movie.update({
       where: { id: movie.id },
@@ -104,6 +111,7 @@ export const deleteMovie = Api(
   Delete('/api/movies/:id'),
   Params<Id>(),
   ValidateHttp({ params: IdSchema }),
+  Middleware(adminRequired),
   async () => {
     const id = useParamsId();
     return await prisma.movie.delete({
@@ -115,6 +123,7 @@ export const deleteMovie = Api(
 export const createMovie = Api(
   Post('/api/movies'),
   Validate(MovieSchema),
+  Middleware(adminRequired),
   async (movie: z.infer<typeof MovieSchema>) => {
     return await prisma.movie.create({
       data: {

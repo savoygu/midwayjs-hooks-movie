@@ -10,3 +10,9 @@ export const COMMENT_SELECT_FIELDS = {
     },
   },
 };
+
+export const USER_SELECT_FIELDS = {
+  id: true,
+  name: true,
+  role: true,
+};

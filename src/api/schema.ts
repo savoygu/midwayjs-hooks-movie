@@ -5,3 +5,5 @@ export const IdSchema = z.object({
 });
 
 export type Id = z.infer<typeof IdSchema>;
+
+export const PageSchema = z.object({});
