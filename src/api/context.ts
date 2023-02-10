@@ -5,3 +5,8 @@ export function useParamsId() {
   const ctx = useContext<Context>();
   return Number(ctx.params.id);
 }
+
+export function useParams() {
+  const ctx = useContext<Context>();
+  return ctx.params;
+}

@@ -12,24 +12,53 @@ import { z } from 'zod';
 import { prisma } from './prisma';
 import { Id, IdSchema } from './schema';
 import { useParamsId } from './context';
+import { COMMENT_SELECT_FIELDS } from './select';
 
 export const getMovie = Api(
-  Get('/api/movie/:id'),
+  Get('/api/movies/:id'),
   Params<Id>(),
   ValidateHttp({ params: IdSchema }),
   async () => {
     const id = useParamsId();
-    const movie = await prisma.movie.findUnique({
+    return await prisma.movie.findUnique({
       where: { id },
-      include: { category: true },
+      // include: {
+      //   category: true,
+      //   comments: {
+      //     orderBy: {
+      //       createdAt: 'desc',
+      //     },
+      //     include: {
+      //       user: true,
+      //     },
+      //   },
+      // },
+      select: {
+        title: true,
+        summary: true,
+        poster: true,
+        doctor: true,
+        year: true,
+        country: true,
+        language: true,
+        category: {
+          select: {
+            name: true,
+          },
+        },
+        comments: {
+          orderBy: {
+            createdAt: 'desc',
+          },
+          select: COMMENT_SELECT_FIELDS,
+        },
+      },
     });
-    return movie;
   }
 );
 
 export const getMovies = Api(Get('/api/movies'), async () => {
-  const movies = await prisma.movie.findMany();
-  return movies;
+  return await prisma.movie.findMany();
 });
 
 const MovieSchema = z.object({
@@ -51,10 +80,10 @@ const FullMovieSchema = MovieSchema.merge(
 );
 
 export const updateMovie = Api(
-  Put('/api/movie'),
+  Put('/api/movies'),
   Validate(FullMovieSchema),
   async (movie: z.infer<typeof FullMovieSchema>) => {
-    const result = await prisma.movie.update({
+    return await prisma.movie.update({
       where: { id: movie.id },
       data: {
         title: movie.title,
@@ -68,28 +97,26 @@ export const updateMovie = Api(
         categoryId: movie.categoryId,
       },
     });
-    return result;
   }
 );
 
 export const deleteMovie = Api(
-  Delete('/api/movie/:id'),
+  Delete('/api/movies/:id'),
   Params<Id>(),
   ValidateHttp({ params: IdSchema }),
   async () => {
     const id = useParamsId();
-    const movie = await prisma.movie.delete({
+    return await prisma.movie.delete({
       where: { id },
     });
-    return movie;
   }
 );
 
 export const createMovie = Api(
-  Post('/api/movie'),
+  Post('/api/movies'),
   Validate(MovieSchema),
   async (movie: z.infer<typeof MovieSchema>) => {
-    const result = await prisma.movie.create({
+    return await prisma.movie.create({
       data: {
         title: movie.title,
         summary: movie.summary,
@@ -101,6 +128,5 @@ export const createMovie = Api(
         flash: movie.flash,
       },
     });
-    return result;
   }
 );
