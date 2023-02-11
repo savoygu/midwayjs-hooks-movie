@@ -1,6 +1,6 @@
+import type { ApiConfig } from '@midwayjs/hooks';
 import {
   Api,
-  ApiConfig,
   Delete,
   Get,
   Params,
@@ -10,10 +10,11 @@ import {
   ValidateHttp,
 } from '@midwayjs/hooks';
 import { z } from 'zod';
-import { prisma } from './prisma';
-import { Id, IdSchema } from './schema';
-import { useParamsId } from './context';
 import { adminRequired } from '../middleware/permission';
+import { prisma } from './prisma';
+import type { Id } from './schema';
+import { IdSchema } from './schema';
+import { useParamsId } from './context';
 
 export const config: ApiConfig = {
   middleware: [adminRequired],

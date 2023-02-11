@@ -1,21 +1,22 @@
+import type { ApiConfig } from '@midwayjs/hooks';
 import {
   Api,
-  ApiConfig,
   Delete,
   Params,
   Post,
   Put,
-  useContext,
   Validate,
   ValidateHttp,
+  useContext,
 } from '@midwayjs/hooks';
 import type { Context } from '@midwayjs/koa';
 import { z } from 'zod';
+import { signInRequired } from '../middleware/permission';
 import { useParams, useParamsId } from './context';
 import { prisma } from './prisma';
-import { Id, IdSchema } from './schema';
+import type { Id } from './schema';
+import { IdSchema } from './schema';
 import { COMMENT_SELECT_FIELDS } from './select';
-import { signInRequired } from '../middleware/permission';
 
 export const config: ApiConfig = {
   middleware: [signInRequired],
@@ -59,7 +60,7 @@ export const updateComment = Api(
   ValidateHttp({ params: IdsSchema }),
   async (comment: z.infer<typeof CommentSchema>) => {
     const ctx = useContext<Context>();
-    const { movieId, commentId } = useParams();
+    const { commentId } = useParams();
 
     const { userId } = await prisma.comment.findUnique({
       where: { id: Number(commentId) },
@@ -92,7 +93,7 @@ export const deleteComment = Api(
   ValidateHttp({ params: IdsSchema }),
   async () => {
     const ctx = useContext<Context>();
-    const { movieId, commentId } = useParams();
+    const { commentId } = useParams();
 
     const { userId } = await prisma.comment.findUnique({
       where: { id: Number(commentId) },

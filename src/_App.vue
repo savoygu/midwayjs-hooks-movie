@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { getSearchMovies } from './api';
-import { updateCategory } from './api/category';
 
 function addMovie() {
   getSearchMovies({ query: { q: 'abc' } })

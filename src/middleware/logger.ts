@@ -1,4 +1,4 @@
-import { Context } from '@midwayjs/koa';
+import type { Context } from '@midwayjs/koa';
 import { useContext } from '@midwayjs/hooks';
 
 export const logger = async (next: any) => {

@@ -3,14 +3,14 @@ import {
   Get,
   Middleware,
   Post,
-  useContext,
   Validate,
+  useContext,
 } from '@midwayjs/hooks';
 import type { Context } from '@midwayjs/koa';
 import { z } from 'zod';
+import { adminRequired } from '../middleware/permission';
 import { prisma } from './prisma';
 import { USER_SELECT_FIELDS } from './select';
-import { adminRequired } from '../middleware/permission';
 
 export const getUsers = Api(
   Get('/api/users'),

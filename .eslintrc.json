@@ -1,6 +1,6 @@
 {
-  "extends": ["./node_modules/mwts"],
-  "plugins": ["plugin:vue/vue3-recommended"],
+  "extends": ["@antfu", "prettier"],
+  "plugins": ["prettier"],
   "ignorePatterns": [
     "node_modules",
     "dist",
@@ -10,5 +10,10 @@
   ],
   "env": {
     "jest": true
+  },
+  "rules": {
+    "prettier/prettier": "error",
+    "curly": "off",
+    "no-console": "off"
   }
 }

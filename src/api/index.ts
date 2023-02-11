@@ -3,14 +3,13 @@ import {
   Get,
   Params,
   Query,
-  useContext,
   ValidateHttp,
+  useContext,
 } from '@midwayjs/hooks';
 import type { Context } from '@midwayjs/koa';
 import { z } from 'zod';
 import { useParams } from './context';
 import { prisma } from './prisma';
-import { PageSchema } from './schema';
 
 const IdSchema = z.object({
   id: z.string().regex(/^\d+|all$/),

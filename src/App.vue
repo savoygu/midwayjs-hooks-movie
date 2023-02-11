@@ -4,10 +4,10 @@ import { getDate } from './api/date';
 import fetchGithubStars from './api/star';
 import { getBookByParams, getBookByQuery } from './api/book';
 
-let date = ref('');
-let repo = ref(null);
-let bookByQuery = ref(null);
-let bookByParams = ref(null);
+const date = ref('');
+const repo = ref(null);
+const bookByQuery = ref(null);
+const bookByParams = ref(null);
 
 getDate().then(res => (date.value = res));
 fetchGithubStars('midwayjs/midway').then(res => (repo.value = res));

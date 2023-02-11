@@ -10,11 +10,12 @@ import {
   ValidateHttp,
 } from '@midwayjs/hooks';
 import { z } from 'zod';
+import { adminRequired } from '../middleware/permission';
 import { prisma } from './prisma';
-import { Id, IdSchema } from './schema';
+import type { Id } from './schema';
+import { IdSchema } from './schema';
 import { useParamsId } from './context';
 import { COMMENT_SELECT_FIELDS } from './select';
-import { adminRequired } from '../middleware/permission';
 
 export const getMovie = Api(
   Get('/api/movies/:id'),
