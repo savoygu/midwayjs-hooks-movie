@@ -22,6 +22,12 @@ export const getUsers = Api(
   }
 );
 
+export const checkUserExpires = Api(Get('/api/users/expires'), async () => {
+  const ctx = useContext<Context>();
+  const user = ctx.session.user;
+  return [Boolean(!user), user];
+});
+
 const UserSchema = z.object({
   name: z.string().min(1),
   password: z.string().min(6).max(20),
@@ -51,8 +57,7 @@ export const signIn = Api(
     });
 
     if (result.password !== user.password) {
-      // ctx.throw(400, 'incorrect password');
-      return false;
+      ctx.throw(400, '用户名或密码不正确');
     }
 
     // save session
@@ -62,15 +67,17 @@ export const signIn = Api(
       role: result.role,
     };
     ctx.session.user = sharedUser;
-    // ctx.cookies.set('user', JSON.stringify(sharedUser));
+    ctx.cookies.set('user', JSON.stringify(sharedUser), {
+      expires: new Date(Date.now() + 24 * 3600 * 1000),
+    });
 
-    return true;
+    return sharedUser;
   }
 );
 
 export const signOut = Api(Post('/api/users/signout'), async () => {
   const ctx = useContext<Context>();
   ctx.session = null;
-  // ctx.cookies.set('user', null);
+  ctx.cookies.set('user', null);
   return true;
 });

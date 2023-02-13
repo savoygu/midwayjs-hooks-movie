@@ -37,6 +37,9 @@ Content-Type: {{contentType}}
 ###  登出
 POST {{baseURL}}/api/users/signout
 
+###  过期
+GET {{baseURL}}/api/users/expires
+
 
 ### 电影
 ###   获取全部电影
