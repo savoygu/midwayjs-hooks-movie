@@ -37,6 +37,7 @@ export const getMovie = Api(
       //   },
       // },
       select: {
+        id: true,
         title: true,
         summary: true,
         poster: true,

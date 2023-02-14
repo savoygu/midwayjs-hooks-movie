@@ -2,14 +2,27 @@ import { createRouter, createWebHashHistory } from 'vue-router';
 import { useUserStore } from '../store/user';
 
 const routes = [
-  { path: '/', name: 'Home', component: import('../views/Home.vue') },
+  { path: '/', name: 'Home', component: () => import('../views/Home.vue') },
   {
     path: '/movie/:id',
     name: 'Movie',
-    component: import('../views/Movie.vue'),
+    component: () => import('../views/Movie.vue'),
   },
-  { path: '/signin', name: 'SignIn', component: import('../views/SignIn.vue') },
-  { path: '/signup', name: 'SignUp', component: import('../views/SignUp.vue') },
+  {
+    path: '/search',
+    name: 'Search',
+    component: () => import('../views/Search.vue'),
+  },
+  {
+    path: '/signin',
+    name: 'SignIn',
+    component: () => import('../views/SignIn.vue'),
+  },
+  {
+    path: '/signup',
+    name: 'SignUp',
+    component: () => import('../views/SignUp.vue'),
+  },
 ];
 
 export const router = createRouter({
@@ -22,12 +35,12 @@ router.beforeEach(async (to, from, next) => {
   if (!userStore.user && to.name !== 'SignIn') {
     const [expires, user] = await userStore.check();
     if (expires) {
-      return { name: 'SignIn' };
+      next({ name: 'SignIn' });
     } else {
       userStore.save(user);
       next();
     }
   } else if (userStore.user && to.name === 'SignIn') {
-    return { path: '/' };
+    next({ path: '/' });
   } else next();
 });

@@ -5,12 +5,12 @@
     "node_modules",
     "dist",
     "test",
-    "jest.config.js",
+    // "jest.config.js",
     "interface.ts"
   ],
-  "env": {
-    "jest": true
-  },
+  // "env": {
+  //   "jest": true
+  // },
   "rules": {
     "prettier/prettier": "error",
     "curly": "off",

@@ -12,7 +12,10 @@ import { useParams } from './context';
 import { prisma } from './prisma';
 
 const IdSchema = z.object({
-  id: z.string().regex(/^\d+|all$/),
+  id: z
+    .string()
+    .regex(/^\d+|all$/)
+    .optional(),
 });
 
 export type Id = z.infer<typeof IdSchema>;

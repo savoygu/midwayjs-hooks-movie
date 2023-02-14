@@ -1,156 +1,150 @@
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue';
-import type { ComputedRef } from 'vue';
-import { useToast } from 'bootstrap-vue-next';
+import { reactive, ref } from 'vue';
 import { storeToRefs } from 'pinia';
-import { signIn, signUp } from '../api/user';
+import type { FormInstance, FormRules } from 'element-plus';
+import { ElMessage } from 'element-plus';
+import { signIn as signInApi, signUp as signUpApi } from '../api/user';
 import { useUserStore } from '../store/user';
-
-interface SignForm {
-  name: string;
-  password: string;
-}
-
-type FullSignForm = SignForm & { repassword: string };
 
 // State
 const q = ref('');
 const openSignIn = ref(false);
-const openSignUp = ref(false);
+const signInFormRef = ref<FormInstance>();
 const signInForm = reactive({
   name: '',
   password: '',
 });
+const openSignUp = ref(false);
+const signUpFormRef = ref<FormInstance>();
 const signUpForm = reactive({
   name: '',
   password: '',
   repassword: '',
 });
-const showError = ref(false);
+
+const validateRepassword = (rule: any, value: any, callback: any) => {
+  if (value === '') {
+    callback(new Error('确认密码不能为空'));
+  } else if (value !== signInForm.password) {
+    callback(new Error('确认密码与密码不一致'));
+  } else {
+    callback();
+  }
+};
+
+const rules = {
+  name: [
+    { required: true, message: '用户名不能为空', trigger: 'blur' },
+    {
+      min: 4,
+      max: 12,
+      message: '用户名长度必须在 4 到 12 之间',
+      trigger: 'blur',
+    },
+  ],
+  password: [
+    { required: true, message: '密码不能为空', trigger: 'blur' },
+    {
+      min: 6,
+      max: 20,
+      message: '密码长度必须在 6 到 20 之间',
+      trigger: 'blur',
+    },
+  ],
+};
+const signInRules = reactive<FormRules>(rules);
+const signUpRules = reactive<FormRules>({
+  ...rules,
+  repassword: [{ validator: validateRepassword, trigger: 'blur' }],
+});
 
 // Hooks
-const toast = useToast();
-const showDanger = (title: string) => {
-  toast.show({ title }, { pos: 'top-center', variant: 'danger' });
-};
-const showSuccess = (title: string) => {
-  toast.show({ title }, { pos: 'top-center', variant: 'success' });
-};
 const userStore = useUserStore();
 const { user } = storeToRefs(userStore);
 
-// Computed
-const validateName = (signForm: SignForm) => {
-  return computed(() => {
-    return signForm.name.length > 3 && signForm.name.length < 13; // [4, 12]
-  });
-};
-const validatePassword = (signForm: SignForm) => {
-  return computed(() => {
-    return signForm.password.length > 5 && signForm.password.length < 21; // [6, 20]
-  });
-};
-const validateRepassword = (signForm: FullSignForm) => {
-  return computed(() => {
-    return signForm.repassword === signForm.password; // [6, 20]
-  });
-};
-
-const validationSignIn = reactive<Record<string, ComputedRef<boolean>>>({
-  name: validateName(signInForm),
-  password: validatePassword(signInForm),
-});
-const validationSignUp = reactive<Record<string, ComputedRef<boolean>>>({
-  name: validateName(signUpForm),
-  password: validatePassword(signUpForm),
-  repassword: validateRepassword(signUpForm),
-});
-
 // Methods
-async function onSignInSubmit() {
-  const hasError = (showError.value = Object.values(validationSignIn).some(
-    v => !v
-  ));
-  if (hasError) {
-    return;
-  }
-
-  try {
-    const user = await signIn(signInForm);
-    // save user to store
-    userStore.save(user);
-    showSuccess('登录成功');
-    onSignInReset();
-  } catch (err) {
-    console.log(err);
-    showDanger(err?.data?.message ?? '登录失败');
-  }
+const showError = (message: string) => {
+  ElMessage({ message, type: 'error' });
+};
+const showSuccess = (message: string) => {
+  ElMessage({ message, type: 'success' });
+};
+async function submitSignIn() {
+  signInFormRef.value.validate(async valid => {
+    if (valid) {
+      try {
+        const user = await signInApi(signInForm);
+        // save user to store
+        userStore.save(user);
+        showSuccess('登录成功');
+        resetSignIn();
+      } catch (err) {
+        console.log(err);
+        showError(err?.data?.message ?? '登录失败');
+      }
+    } else {
+      return false;
+    }
+  });
 }
-function onSignInReset() {
-  showError.value = false;
+function resetSignIn() {
   openSignIn.value = false;
 }
-async function onSignUpSubmit() {
-  const hasError = (showError.value = Object.values(validationSignUp).some(
-    v => !v
-  ));
-  if (hasError) {
-    return;
-  }
-
-  try {
-    const { repassword: _, ...needSubmitForm } = signUpForm;
-    await signUp(needSubmitForm);
-    showSuccess('注册成功');
-    onSignUpReset();
-  } catch (err) {
-    console.log(err);
-    showDanger(err?.data?.message ?? '注册失败');
-  }
+async function submitSignUp() {
+  signUpFormRef.value.validate(async valid => {
+    if (valid) {
+      try {
+        const { repassword: _, ...needSubmitForm } = signUpForm;
+        await signUpApi(needSubmitForm);
+        showSuccess('注册成功');
+        resetSignUp();
+      } catch (err) {
+        console.log(err);
+        showError(err?.data?.message ?? '注册失败');
+      }
+    } else {
+      return false;
+    }
+  });
 }
-function onSignUpReset() {
-  showError.value = false;
+function resetSignUp() {
   openSignUp.value = false;
 }
 </script>
 
 <template>
-  <b-container
-    :toast="{ root: true }"
-    fluid="sm"
-    position="position-fixed"
-    style="top: 50px; left: -200px; z-index: 2000"
-  ></b-container>
-  <b-container>
-    <div class="page-header">
-      <b-row>
-        <h4>电影首页</h4>
-        <b-col cols="4"><small>重度科幻迷</small></b-col>
-        <b-col cols="8">
-          <b-form>
-            <b-form-group class="col-6 float-end">
-              <div class="d-flex">
-                <b-form-input
-                  v-model="q"
-                  class="rounded-tr-none rounded-br-none"
-                ></b-form-input>
-                <b-button
-                  variant="primary"
-                  class="w-20 rounded-tl-none rounded-bl-none"
-                >
-                  搜索
-                </b-button>
-              </div>
-            </b-form-group>
-          </b-form>
-        </b-col>
-      </b-row>
+  <div class="w-[1200px] mx-auto">
+    <div class="page-header flex-1">
+      <h1>电影首页</h1>
+      <el-row>
+        <el-col :span="8"><small>重度科幻迷</small></el-col>
+        <el-col :span="16">
+          <div class="flex justify-end">
+            <el-input
+              v-model="q"
+              class="w-1/3 rounded-tr-none rounded-br-none"
+            ></el-input>
+            <el-button
+              type="primary"
+              class="w-20 rounded-tl-none rounded-bl-none"
+            >
+              搜索
+            </el-button>
+          </div>
+        </el-col>
+      </el-row>
     </div>
-  </b-container>
-  <b-navbar :container="false" fixed="bottom" class="navbar-default">
-    <b-container>
-      <a href="" class="navbar-brand text-lg">重度科幻迷</a>
-      <div class="navbar-text text-sm">
+  </div>
+  <div
+    class="fixed inset-x-0 bottom-0 z-50 bg-[#f8f8f8] border-t border-solid border-[#e7e7e7]"
+  >
+    <el-row
+      justify="space-between"
+      align="middle"
+      class="w-[1200px] mx-auto h-[50px]"
+    >
+      <a href="/" class="no-underline text-lg text-[#777]">重度科幻迷</a>
+      <div class="text-sm text-[#777]">
         <template v-if="user">
           <span>欢迎您，{{ user.name }}</span>
           <span class="mx-1">|</span>
@@ -158,85 +152,59 @@ function onSignUpReset() {
         </template>
         <template v-else>
           <span class="cursor-pointer" @click="openSignUp = true">注册</span>
-          <span class="mx-1">|</span>
+          <span class="mx-2">|</span>
           <span class="cursor-pointer" @click="openSignIn = true">登录</span>
         </template>
       </div>
-    </b-container>
-  </b-navbar>
-  <b-modal v-model="openSignIn" title="登录" hide-footer>
-    <form @submit.stop.prevent="onSignInSubmit" @reset="onSignInReset">
-      <b-form-group label="用户名" label-for="signIn-name">
-        <b-form-input id="signIn-name" v-model="signInForm.name"></b-form-input>
-        <b-form-invalid-feedback
-          v-if="showError"
-          :state="validationSignIn.name"
-        >
-          用户名长度必须在 5 - 12 之间
-        </b-form-invalid-feedback>
-      </b-form-group>
-      <b-form-group label="密码" label-for="signIn-password">
-        <b-form-input
-          id="signIn-password"
-          v-model="signInForm.password"
-          type="password"
-        ></b-form-input>
-        <b-form-invalid-feedback
-          v-if="showError"
-          :state="validationSignIn.password"
-        >
-          密码长度必须在 6 - 20 之间
-        </b-form-invalid-feedback>
-      </b-form-group>
-      <div class="float-end">
-        <b-button type="reset" variant="link" class="mr-2">关闭</b-button>
-        <b-button type="submit" variant="primary">提交</b-button>
+    </el-row>
+  </div>
+  <el-dialog v-model="openSignIn" title="登录" hide-footer>
+    <el-form
+      ref="signInFormRef"
+      :model="signInForm"
+      :rules="signInRules"
+      label-width="120px"
+      class="overflow-hidden"
+    >
+      <el-form-item label="用户名" prop="name">
+        <el-input v-model="signInForm.name"></el-input>
+      </el-form-item>
+      <el-form-item label="密码" prop="password">
+        <el-input v-model="signInForm.password" type="password"></el-input>
+      </el-form-item>
+      <div class="float-right">
+        <el-button class="mr-2" :class="resetSignIn">关闭</el-button>
+        <el-button type="primary" @click="submitSignIn">提交</el-button>
       </div>
-    </form>
-  </b-modal>
-  <b-modal v-model="openSignUp" title="注册" hide-footer>
-    <form @submit.stop.prevent="onSignUpSubmit" @reset="onSignUpReset">
-      <b-form-group label="用户名" label-for="signUp-name">
-        <b-form-input id="signUp-name" v-model="signUpForm.name"></b-form-input>
-        <b-form-invalid-feedback
-          v-if="showError"
-          :state="validationSignUp.name"
-        >
-          用户名长度必须在 5 - 12 之间
-        </b-form-invalid-feedback>
-      </b-form-group>
-      <b-form-group label="密码" label-for="signUp-password">
-        <b-form-input
-          id="signUp-password"
+    </el-form>
+  </el-dialog>
+  <el-dialog v-model="openSignUp" title="注册" hide-footer>
+    <el-form
+      ref="signUpFormRef"
+      :model="signUpForm"
+      :rules="signUpRules"
+      label-width="120px"
+      class="overflow-hidden"
+    >
+      <el-form-item label="用户名" prop="name">
+        <el-input v-model="signUpForm.name"></el-input>
+      </el-form-item>
+      <el-form-item label="密码" prop="password">
+        <el-input
           v-model="signUpForm.password"
           type="password"
-        ></b-form-input>
-        <b-form-invalid-feedback
-          v-if="showError"
-          :state="validationSignUp.password"
-        >
-          密码长度必须在 6 - 20 之间
-        </b-form-invalid-feedback>
-      </b-form-group>
-      <b-form-group label="确认密码" label-for="signUp-repassword">
-        <b-form-input
-          id="signUp-repassword"
-          v-model="signUpForm.repassword"
-          type="password"
-        ></b-form-input>
-        <b-form-invalid-feedback
-          v-if="showError"
-          :state="validationSignUp.repassword"
-        >
-          确认密码与密码不一致
-        </b-form-invalid-feedback>
-      </b-form-group>
-      <div class="float-end">
-        <b-button type="reset" variant="link" class="mr-2">关闭</b-button>
-        <b-button type="submit" variant="primary">提交</b-button>
+          autocomplete="off"
+        ></el-input>
+      </el-form-item>
+      <el-form-item label="确认密码" prop="repassword">
+        <el-input v-model="signUpForm.repassword" type="password"></el-input>
+      </el-form-item>
+      <div class="float-right">
+        <el-button class="mr-2" @click="resetSignUp">关闭</el-button>
+        <el-button type="primary" @click="submitSignUp">提交</el-button>
       </div>
-    </form>
-  </b-modal>
+    </el-form>
+  </el-dialog>
 </template>
 
 <style lang="scss" scoped>
