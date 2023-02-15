@@ -29,12 +29,9 @@ function onCommentCreate(content: string) {
   <div class="w-[1200px] mx-auto">
     <el-row :gutter="16">
       <el-col :span="16">
-        <video
-          :src="movie.flash"
-          width="720"
-          height="600"
-          class="mx-auto"
-        ></video>
+        <div class="w-[720px] h-[600px] flex items-center">
+          <video :src="movie.flash" class="w-full mb-4" controls></video>
+        </div>
         <el-card shadow="never">
           <template #header>评论区</template>
           <CommentForm

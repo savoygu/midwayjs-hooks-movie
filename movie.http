@@ -77,7 +77,7 @@ Content-Type: {{contentType}}
   "args": [
     {
       "id": 5,
-      "flash": "https://vt1.doubanio.com/202302151254/94663af9822615ac0f1c44d4f52e4984/view/movie/M/402680986.mp4"
+      "poster": "https://img2.doubanio.com/view/photo/s_ratio_poster/public/p2545472803.webp"
     }
   ]
 }

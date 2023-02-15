@@ -56,7 +56,7 @@ function submitComment() {
         ></el-input>
         <el-button
           type="primary"
-          class="w-20 h-auto rounded-tl-none rounded-bl-none"
+          class="w-20 !h-auto rounded-tl-none rounded-bl-none"
           @click="submitComment"
         >
           {{ loading ? '评论中' : '评论' }}

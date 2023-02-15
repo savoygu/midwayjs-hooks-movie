@@ -34,10 +34,15 @@ getCategoriesMovies({ params: { id: 'all' } }).then(
         <el-row v-if="item.movies.length > 0" :gutter="16">
           <el-col v-for="movie in item.movies" :key="movie.id" :span="4">
             <el-image
-              class="w-full rounded"
-              src="https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg"
+              class="w-full rounded max-h-[160px]"
+              :src="movie.poster"
               :alt="movie.title"
               fit="fill"
+              @error="
+                () =>
+                  (movie.poster =
+                    'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg')
+              "
             ></el-image>
             <h5>{{ movie.title }}</h5>
             <el-button
