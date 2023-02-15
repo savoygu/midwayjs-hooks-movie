@@ -40,7 +40,7 @@ const CategorySchema = z.object({
   name: z.string().min(1),
 });
 
-const FullCategorySchema = CategorySchema.merge(
+const FullCategorySchema = CategorySchema.partial().merge(
   z.object({
     id: z.number(),
   })

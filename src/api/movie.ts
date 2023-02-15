@@ -45,6 +45,7 @@ export const getMovie = Api(
         year: true,
         country: true,
         language: true,
+        flash: true,
         category: {
           select: {
             name: true,
@@ -80,13 +81,12 @@ const MovieSchema = z.object({
   flash: z.string().url().optional(),
 });
 
-const FullMovieSchema = MovieSchema.merge(
+const FullMovieSchema = MovieSchema.partial().merge(
   z.object({
     id: z.number(),
     categoryId: z.number().optional(),
   })
 );
-
 export const updateMovie = Api(
   Put('/api/movies'),
   Validate(FullMovieSchema),
