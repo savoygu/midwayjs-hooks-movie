@@ -3,7 +3,11 @@ import { reactive, ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import type { FormInstance, FormRules } from 'element-plus';
 import { ElMessage } from 'element-plus';
-import { signIn as signInApi, signUp as signUpApi } from '../api/user';
+import {
+  signIn as signInApi,
+  signOut as signOutApi,
+  signUp as signUpApi,
+} from '../api/user';
 import { useUserStore } from '../store/user';
 
 // State
@@ -110,6 +114,15 @@ async function submitSignUp() {
 function resetSignUp() {
   openSignUp.value = false;
 }
+async function onSignOut() {
+  try {
+    await signOutApi();
+    userStore.save(null);
+    showSuccess('登出成功');
+  } catch (err) {
+    showError(err?.data?.message ?? '登出失败');
+  }
+}
 </script>
 
 <template>
@@ -148,7 +161,7 @@ function resetSignUp() {
         <template v-if="user">
           <span>欢迎您，{{ user.name }}</span>
           <span class="mx-1">|</span>
-          <span>登出</span>
+          <span class="cursor-pointer" @click="onSignOut">登出</span>
         </template>
         <template v-else>
           <span class="cursor-pointer" @click="openSignUp = true">注册</span>

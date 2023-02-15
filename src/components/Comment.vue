@@ -4,6 +4,7 @@ import { useAsyncState } from '@vueuse/core';
 import { computed, ref, toRefs } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useMovieStore } from '../store/movie';
+import { useUserStore } from '../store/user';
 import { createComment, deleteComment, updateComment } from '../api/comment';
 
 // Props
@@ -23,6 +24,8 @@ const areChildrenHidden = ref(false);
 const movieStore = useMovieStore();
 const { movie } = storeToRefs(movieStore);
 const childComments = computed(() => movieStore.commentsByParentId[commentId]);
+const userStore = useUserStore();
+const { user } = storeToRefs(userStore);
 
 const createCommentState = useAsyncState(createComment, null, {
   immediate: false,
@@ -60,7 +63,11 @@ function onCommentUpdate(content: string) {
 function onCommentDelete() {
   return deleteCommentState
     .execute(0, { params: { commentId, movieId: movie.value.id } })
-    .then(comment => movieStore.deleteLocalComment(comment.id));
+    .then(comment => {
+      if (comment) {
+        movieStore.deleteLocalComment(comment.id);
+      }
+    });
 }
 </script>
 
@@ -83,12 +90,17 @@ function onCommentDelete() {
       <el-link @click="isReplying = !isReplying">
         {{ isReplying ? '取消' : '' }}回复
       </el-link>
-      <span class="mx-2">|</span>
-      <el-link @click="isEditing = !isEditing">
-        {{ isEditing ? '取消' : '' }}编辑
-      </el-link>
-      <span class="mx-2">|</span>
-      <el-link type="danger" @click="onCommentDelete">删除</el-link>
+      <template v-if="user && comment.user.id === user.id">
+        <span class="mx-2">|</span>
+        <el-link @click="isEditing = !isEditing">
+          {{ isEditing ? '取消' : '' }}编辑
+        </el-link>
+        <span class="mx-2">|</span>
+        <el-link type="danger" @click="onCommentDelete">删除</el-link>
+      </template>
+    </div>
+    <div v-if="deleteCommentState.error.value" class="text-[#ff5757] mt-1">
+      {{ (deleteCommentState.error.value as any).data.message }}
     </div>
     <CommentForm
       v-if="isReplying"
@@ -109,13 +121,9 @@ function onCommentDelete() {
         <CommentList :comments="childComments" />
       </div>
     </div>
-    <el-button
-      class="mt-1"
-      :class="{ hidden: !areChildrenHidden }"
-      @click="areChildrenHidden = false"
-    >
-      展示回复
-    </el-button>
+    <div class="mt-1" :class="{ hidden: !areChildrenHidden }">
+      <el-button @click="areChildrenHidden = false"> 展示回复 </el-button>
+    </div>
   </template>
 </template>
 

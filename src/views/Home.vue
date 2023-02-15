@@ -1,17 +1,15 @@
 <script setup lang="ts">
-import type { Movie } from '@prisma/client';
+import type { Category, Movie } from '@prisma/client';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { getCategoriesMovies } from '../api';
 
+type EnhanceCategory = Pick<Category, 'id' | 'name'> & {
+  movies: Movie[];
+};
+
 // State
-const categories = ref<
-  {
-    id: number;
-    name: string;
-    movies: Movie[];
-  }[]
->([]);
+const categories = ref<EnhanceCategory[]>([]);
 
 // Hooks
 const router = useRouter();
