@@ -2,7 +2,11 @@
 import type { Comment as TComment, User } from '@prisma/client';
 
 const props = defineProps<{
-  comments: (TComment & { user: User })[];
+  comments: (TComment & {
+    user: User;
+    likedByMe: boolean;
+    likeCount: number;
+  })[];
 }>();
 </script>
 
