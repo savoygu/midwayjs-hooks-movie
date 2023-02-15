@@ -24,7 +24,13 @@ getCategoriesMovies({ params: { id: 'all' } }).then(
   <div class="w-[1200px] mx-auto">
     <template v-for="item in categories" :key="item.id">
       <el-card class="mb-4" shadow="never">
-        <template #header>{{ item.name }}</template>
+        <template #header>
+          <span
+            class="cursor-pointer"
+            @click="router.push({ path: '/search', query: { cid: item.id } })"
+            >{{ item.name }}</span
+          >
+        </template>
         <el-row v-if="item.movies.length > 0" :gutter="16">
           <el-col v-for="movie in item.movies" :key="movie.id" :span="4">
             <el-image

@@ -82,23 +82,29 @@ export const getSearchMovies = Api(
         total: _count.movies, // 总条数
       };
     } else {
-      const movies = await prisma.movie.findMany({
-        where: {
-          title: {
-            contains: String(q),
-          },
+      const where = {
+        title: {
+          contains: String(q),
         },
-        ...(page
-          ? {
-              skip: (Number(page) - 1) * Number(size),
-              take: Number(size),
-            }
-          : {}),
-      });
+      };
+      const [total, movies] = await prisma.$transaction([
+        prisma.movie.count({
+          where,
+        }),
+        prisma.movie.findMany({
+          where,
+          ...(page
+            ? {
+                skip: (Number(page) - 1) * Number(size),
+                take: Number(size),
+              }
+            : {}),
+        }),
+      ]);
       return {
-        name: q,
+        name: String(q),
         movies,
-        total: movies.length,
+        total,
       };
     }
   }

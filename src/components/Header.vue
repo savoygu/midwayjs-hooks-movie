@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 import {
   signIn as signInApi,
   signOut as signOutApi,
@@ -10,15 +11,18 @@ import { useUserStore } from '../store/user';
 import { showError, showSuccess } from '../utils/ElMessage';
 
 // State
-const q = ref('');
 const openSignIn = ref(false);
 const openSignUp = ref(false);
 
 // Hooks
+const router = useRouter();
 const userStore = useUserStore();
-const { user } = storeToRefs(userStore);
+const { user, q } = storeToRefs(userStore);
 
 // Methods
+function handleSearch() {
+  router.push({ path: '/search', query: { q: q.value } });
+}
 function resetSignIn() {
   openSignIn.value = false;
 }
@@ -39,18 +43,18 @@ async function onSignOut() {
 <template>
   <div class="w-[1200px] mx-auto">
     <div class="page-header flex-1">
-      <h1>电影首页</h1>
+      <h2>电影频道</h2>
       <el-row>
         <el-col :span="8"><small>重度科幻迷</small></el-col>
         <el-col :span="16">
           <div class="flex justify-end">
-            <el-input
-              v-model="q"
-              class="w-1/3 rounded-tr-none rounded-br-none"
-            ></el-input>
+            <div class="w-1/3 rounded-tr-none rounded-br-none">
+              <el-input v-model="q"></el-input>
+            </div>
             <el-button
               type="primary"
               class="w-20 rounded-tl-none rounded-bl-none"
+              @click="handleSearch"
             >
               搜索
             </el-button>

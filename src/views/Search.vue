@@ -1,7 +1,95 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import type { Movie } from '@prisma/client';
+import { ref, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { getSearchMovies } from '../api';
+import { PAGE_SIZE } from '../utils/constant';
+
+interface SearchResult {
+  name: string;
+  movies: Movie[];
+  total: number;
+}
+
+// State
+const searchResult = ref<SearchResult>({
+  name: '',
+  movies: [],
+  total: 0,
+});
+
+// Hooks
+const router = useRouter();
+const route = useRoute();
+const page = ref(1);
+const size = ref(PAGE_SIZE);
+
+watch(
+  () => route.query.q,
+  () => {
+    resetPage();
+    getMovies(1, size.value);
+  },
+  { immediate: true }
+);
+
+function resetPage() {
+  page.value = 1;
+  size.value = PAGE_SIZE;
+}
+
+function handleSizeChange(size: number) {
+  resetPage();
+  getMovies(1, size);
+}
+function handleCurrentChange(page: number) {
+  getMovies(page, size.value);
+}
+function getMovies(page: number, size: number) {
+  getSearchMovies({
+    query: {
+      ...(route.query.cid ? { cid: String(route.query.cid) } : {}),
+      q: String(route.query.q),
+      page: String(page),
+      size: String(size),
+    },
+  }).then(res => (searchResult.value = res));
+}
+</script>
 
 <template>
-  <div></div>
+  <el-card class="mb-4 w-[1200px] mx-auto" shadow="never">
+    <template #header>{{ searchResult.name }}</template>
+    <template v-if="searchResult.movies.length > 0">
+      <el-row :gutter="16">
+        <el-col v-for="movie in searchResult.movies" :key="movie.id" :span="4">
+          <el-image
+            class="w-full rounded"
+            src="https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg"
+            :alt="movie.title"
+            fit="fill"
+          ></el-image>
+          <h5>{{ movie.title }}</h5>
+          <el-button
+            type="primary"
+            @click="router.push({ name: 'Movie', params: { id: movie.id } })"
+          >
+            欢迎观看预告片
+          </el-button>
+        </el-col>
+      </el-row>
+      <el-pagination
+        v-model:current-page="page"
+        :page-size="size"
+        :page-sizes="[10, 20, 30, 40]"
+        layout="total, prev, pager, next"
+        :total="searchResult.total"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+      />
+    </template>
+    <p v-else class="text-center text-sm text-[#777]">暂无相关影片</p>
+  </el-card>
 </template>
 
 <style scoped></style>

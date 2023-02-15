@@ -6,12 +6,14 @@ type StoreUser = Pick<User, 'id' | 'name' | 'role'>;
 
 interface UserState {
   user: StoreUser;
+  q: string;
 }
 
 export const useUserStore = defineStore('user', {
   state: (): UserState => {
     return {
       user: null,
+      q: '',
     };
   },
   actions: {

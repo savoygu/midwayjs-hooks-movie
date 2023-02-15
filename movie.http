@@ -1,4 +1,4 @@
-@baseURL=http://localhost:3001
+@baseURL=http://localhost:3000
 @contentType=application/json
 @movieId=4
 
@@ -109,7 +109,7 @@ Content-Type: {{contentType}}
 }
 
 ###   删除分类
-DELETE {{baseURL}}/api/categories/6
+DELETE {{baseURL}}/api/categories/7
 
 ###   更新分类
 PUT {{baseURL}}/api/categories
@@ -167,6 +167,10 @@ GET {{baseURL}}/api/categories/3/movies
 ###
 GET {{baseURL}}/api/categories/all/movies
 
-###   搜索电影
+###   搜索分类
 GET {{baseURL}}/api/search/movies
   ?q=流浪&page=1&size=2&cid=3
+
+###   搜索电影
+GET {{baseURL}}/api/search/movies
+  ?q=流浪&page=1&size=2

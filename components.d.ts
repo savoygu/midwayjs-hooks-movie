@@ -21,6 +21,7 @@ declare module '@vue/runtime-core' {
     ElImage: typeof import('element-plus/es')['ElImage']
     ElInput: typeof import('element-plus/es')['ElInput']
     ElLink: typeof import('element-plus/es')['ElLink']
+    ElPagination: typeof import('element-plus/es')['ElPagination']
     ElProvider: typeof import('element-plus/es')['ElProvider']
     ElRow: typeof import('element-plus/es')['ElRow']
     ElTextarea: typeof import('element-plus/es')['ElTextarea']
