@@ -11,7 +11,7 @@ import {
 } from '@midwayjs/hooks';
 import type { Context } from '@midwayjs/koa';
 import { z } from 'zod';
-import { signInRequired } from '../middleware/permission';
+import { signInRequired } from './middleware/permission';
 import { useParams, useParamsId } from './context';
 import { prisma } from './prisma';
 import type { Id } from './schema';

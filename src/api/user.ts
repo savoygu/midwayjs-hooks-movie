@@ -8,7 +8,7 @@ import {
 } from '@midwayjs/hooks';
 import type { Context } from '@midwayjs/koa';
 import { z } from 'zod';
-import { adminRequired } from '../middleware/permission';
+import { adminRequired } from './middleware/permission';
 import { prisma } from './prisma';
 import { USER_SELECT_FIELDS } from './select';
 
