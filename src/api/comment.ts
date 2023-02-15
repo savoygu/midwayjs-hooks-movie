@@ -42,15 +42,23 @@ export const createComment = Api(
   async (comment: z.infer<typeof CommentSchema>) => {
     const ctx = useContext<Context>();
     const movieId = useParamsId();
-    return await prisma.comment.create({
-      data: {
-        content: comment.content,
-        parentId: comment.parentId,
-        userId: ctx.session.user.id,
-        movieId,
-      },
-      select: COMMENT_SELECT_FIELDS,
-    });
+    return await prisma.comment
+      .create({
+        data: {
+          content: comment.content,
+          parentId: comment.parentId,
+          userId: ctx.session.user.id,
+          movieId,
+        },
+        select: COMMENT_SELECT_FIELDS,
+      })
+      .then(comment => {
+        return {
+          ...comment,
+          likeCount: 0,
+          likedByMe: false,
+        };
+      });
   }
 );
 
@@ -114,5 +122,37 @@ export const deleteComment = Api(
         id: true,
       },
     });
+  }
+);
+
+export const toggleCommentLike = Api(
+  Post('/api/movies/:movieId/comments/:commentId/toggleLike'),
+  Params<Ids>(),
+  ValidateHttp({ params: IdsSchema }),
+  async () => {
+    const ctx = useContext<Context>();
+    const { commentId } = useParams();
+    const data = {
+      commentId: Number(commentId),
+      userId: ctx.session.user?.id,
+    };
+
+    const like = await prisma.like.findUnique({
+      where: {
+        userId_commentId: data,
+      },
+    });
+
+    if (like === null) {
+      return await prisma.like.create({ data }).then(() => {
+        return { addLike: true };
+      });
+    } else {
+      return await prisma.like
+        .delete({ where: { userId_commentId: data } })
+        .then(() => {
+          return { addLike: false };
+        });
+    }
   }
 );

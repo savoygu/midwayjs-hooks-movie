@@ -52,7 +52,7 @@ async function submitSignUp() {
         const { repassword: _, ...needSubmitForm } = signUpForm;
         await props.onSubmit(needSubmitForm);
         showSuccess('注册成功');
-        props.onReset();
+        props.onReset?.();
       } catch (err) {
         console.log(err);
         showError(err?.data?.message ?? '注册失败');

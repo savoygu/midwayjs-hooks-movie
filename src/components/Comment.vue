@@ -1,15 +1,22 @@
 <script setup lang="ts">
 import type { Comment as TComment, User } from '@prisma/client';
 import { useAsyncState } from '@vueuse/core';
-import { computed, ref, toRefs } from 'vue';
 import { storeToRefs } from 'pinia';
+import { computed, ref, toRefs } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import {
+  createComment,
+  deleteComment,
+  toggleCommentLike,
+  updateComment,
+} from '../api/comment';
 import { useMovieStore } from '../store/movie';
 import { useUserStore } from '../store/user';
-import { createComment, deleteComment, updateComment } from '../api/comment';
+import { showError } from '../utils/ElMessage';
 
 // Props
 const props = defineProps<{
-  comment: TComment & { user: User };
+  comment: TComment & { user: User; likedByMe: boolean; likeCount: number };
 }>();
 
 const { comment } = toRefs(props);
@@ -21,6 +28,8 @@ const isReplying = ref(false);
 const areChildrenHidden = ref(false);
 
 // Hooks
+const router = useRouter();
+const route = useRoute();
 const movieStore = useMovieStore();
 const { movie } = storeToRefs(movieStore);
 const childComments = computed(() => movieStore.commentsByParentId[commentId]);
@@ -34,6 +43,9 @@ const updateCommentState = useAsyncState(updateComment, null, {
   immediate: false,
 });
 const deleteCommentState = useAsyncState(deleteComment, null, {
+  immediate: false,
+});
+const toggleCommentLikeState = useAsyncState(toggleCommentLike, null, {
   immediate: false,
 });
 
@@ -69,6 +81,31 @@ function onCommentDelete() {
       }
     });
 }
+
+function onToggleCommentLike() {
+  return toggleCommentLikeState
+    .execute(0, {
+      params: { commentId, movieId: movie.value.id },
+    })
+    .then(response => {
+      if (response) {
+        const { addLike } = response;
+        movieStore.toggleLocalCommentLike(commentId, addLike);
+      } else if (toggleCommentLikeState.error.value) {
+        showError((toggleCommentLikeState.error.value as any).data.message);
+
+        router.push({
+          path: '/signin',
+          query: {
+            fallback: encodeURIComponent(route.fullPath),
+          },
+        });
+      }
+    })
+    .catch(err => {
+      console.log(err);
+    });
+}
 </script>
 
 <template>
@@ -87,6 +124,13 @@ function onCommentDelete() {
     />
     <div v-else class="mx-2 py-2 text-sm">{{ comment.content }}</div>
     <div class="flex mt-2">
+      <el-link
+        :disabled="toggleCommentLikeState.isLoading.value"
+        @click="onToggleCommentLike"
+        >{{ user && comment.likedByMe ? '取消' : '' }}点赞
+        {{ comment.likeCount }}
+      </el-link>
+      <span class="mx-2">|</span>
       <el-link @click="isReplying = !isReplying">
         {{ isReplying ? '取消' : '' }}回复
       </el-link>

@@ -34,7 +34,7 @@ async function submitSignIn() {
         // save user to store
         userStore.save(user);
         showSuccess('登录成功');
-        props.onReset();
+        props.onReset?.();
       } catch (err) {
         console.log(err);
         showError(err?.data?.message ?? '登录失败');

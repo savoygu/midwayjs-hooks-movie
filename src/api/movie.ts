@@ -8,7 +8,9 @@ import {
   Put,
   Validate,
   ValidateHttp,
+  useContext,
 } from '@midwayjs/hooks';
+import type { Context } from '@midwayjs/koa';
 import { z } from 'zod';
 import { adminRequired } from './middleware/permission';
 import { prisma } from './prisma';
@@ -22,43 +24,71 @@ export const getMovie = Api(
   Params<Id>(),
   ValidateHttp({ params: IdSchema }),
   async () => {
+    const ctx = useContext<Context>();
     const id = useParamsId();
-    return await prisma.movie.findUnique({
-      where: { id },
-      // include: {
-      //   category: true,
-      //   comments: {
-      //     orderBy: {
-      //       createdAt: 'desc',
-      //     },
-      //     include: {
-      //       user: true,
-      //     },
-      //   },
-      // },
-      select: {
-        id: true,
-        title: true,
-        summary: true,
-        poster: true,
-        doctor: true,
-        year: true,
-        country: true,
-        language: true,
-        flash: true,
-        category: {
-          select: {
-            name: true,
+    return await prisma.movie
+      .findUnique({
+        where: { id },
+        // include: {
+        //   category: true,
+        //   comments: {
+        //     orderBy: {
+        //       createdAt: 'desc',
+        //     },
+        //     include: {
+        //       user: true,
+        //     },
+        //   },
+        // },
+        select: {
+          id: true,
+          title: true,
+          summary: true,
+          poster: true,
+          doctor: true,
+          year: true,
+          country: true,
+          language: true,
+          flash: true,
+          category: {
+            select: {
+              name: true,
+            },
+          },
+          comments: {
+            orderBy: {
+              createdAt: 'desc',
+            },
+            select: {
+              ...COMMENT_SELECT_FIELDS,
+              _count: { select: { likes: true } },
+            },
           },
         },
-        comments: {
-          orderBy: {
-            createdAt: 'desc',
+      })
+      .then(async movie => {
+        const user = ctx.session.user;
+        const likes = await prisma.like.findMany({
+          where: {
+            userId: user?.id,
+            commentId: { in: movie.comments.map(comment => comment.id) },
           },
-          select: COMMENT_SELECT_FIELDS,
-        },
-      },
-    });
+        });
+
+        return {
+          ...movie,
+          comments: movie.comments.map(comment => {
+            const { _count, ...commentFields } = comment;
+            return {
+              ...commentFields,
+              likedByMe: !user
+                ? false
+                : !!likes.find(like => like.commentId === comment.id),
+              likeCount: _count.likes,
+            };
+          }),
+        };
+      });
   }
 );
 
