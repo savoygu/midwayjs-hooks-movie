@@ -85,7 +85,7 @@ function onCommentDelete() {
       :error="updateCommentState.error"
       :on-submit="onCommentUpdate"
     />
-    <div v-else class="mx-2">{{ comment.content }}</div>
+    <div v-else class="mx-2 py-2 text-sm">{{ comment.content }}</div>
     <div class="flex mt-2">
       <el-link @click="isReplying = !isReplying">
         {{ isReplying ? '取消' : '' }}回复

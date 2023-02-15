@@ -9,16 +9,29 @@ const routes: Array<RouteRecordRaw> = [
     path: '/',
     component: Layout,
     children: [
-      { path: '/', name: 'Home', component: () => import('../views/Home.vue') },
+      {
+        path: '/',
+        name: 'Home',
+        component: () => import('../views/Home.vue'),
+        meta: {
+          title: '电影首页',
+        },
+      },
       {
         path: '/movie/:id',
         name: 'Movie',
         component: () => import('../views/Movie.vue'),
+        meta: {
+          title: '电影详情',
+        },
       },
       {
         path: '/search',
         name: 'Search',
         component: () => import('../views/Search.vue'),
+        meta: {
+          title: '电影搜索',
+        },
       },
     ],
   },

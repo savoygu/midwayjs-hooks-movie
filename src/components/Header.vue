@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { computed, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import {
   signIn as signInApi,
   signOut as signOutApi,
@@ -16,6 +16,8 @@ const openSignUp = ref(false);
 
 // Hooks
 const router = useRouter();
+const route = useRoute();
+const title = computed(() => route.meta.title);
 const userStore = useUserStore();
 const { user, q } = storeToRefs(userStore);
 
@@ -43,7 +45,7 @@ async function onSignOut() {
 <template>
   <div class="w-[1200px] mx-auto">
     <div class="page-header flex-1">
-      <h2>电影频道</h2>
+      <h2>{{ title }}</h2>
       <el-row>
         <el-col :span="8"><small>重度科幻迷</small></el-col>
         <el-col :span="16">

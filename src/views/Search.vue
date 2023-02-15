@@ -58,38 +58,46 @@ function getMovies(page: number, size: number) {
 </script>
 
 <template>
-  <el-card class="mb-4 w-[1200px] mx-auto" shadow="never">
-    <template #header>{{ searchResult.name }}</template>
-    <template v-if="searchResult.movies.length > 0">
-      <el-row :gutter="16">
-        <el-col v-for="movie in searchResult.movies" :key="movie.id" :span="4">
-          <el-image
-            class="w-full rounded"
-            src="https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg"
-            :alt="movie.title"
-            fit="fill"
-          ></el-image>
-          <h5>{{ movie.title }}</h5>
-          <el-button
-            type="primary"
-            @click="router.push({ name: 'Movie', params: { id: movie.id } })"
+  <div class="w-[1200px] mx-auto">
+    <el-card shadow="never">
+      <template #header>{{ searchResult.name }}</template>
+      <template v-if="searchResult.movies.length > 0">
+        <el-row :gutter="16">
+          <el-col
+            v-for="movie in searchResult.movies"
+            :key="movie.id"
+            :span="4"
           >
-            欢迎观看预告片
-          </el-button>
-        </el-col>
-      </el-row>
-      <el-pagination
-        v-model:current-page="page"
-        :page-size="size"
-        :page-sizes="[10, 20, 30, 40]"
-        layout="total, prev, pager, next"
-        :total="searchResult.total"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-      />
-    </template>
-    <p v-else class="text-center text-sm text-[#777]">暂无相关影片</p>
-  </el-card>
+            <el-image
+              class="w-full rounded"
+              src="https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg"
+              :alt="movie.title"
+              fit="fill"
+            ></el-image>
+            <h5>{{ movie.title }}</h5>
+            <el-button
+              type="primary"
+              @click="router.push({ name: 'Movie', params: { id: movie.id } })"
+            >
+              欢迎观看预告片
+            </el-button>
+          </el-col>
+        </el-row>
+        <el-pagination
+          v-model:current-page="page"
+          class="mt-4"
+          :page-size="size"
+          :page-sizes="[10, 20, 30, 40]"
+          layout="total, prev, pager, next"
+          background
+          :total="searchResult.total"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+        />
+      </template>
+      <p v-else class="text-center text-sm text-[#777]">暂无相关影片</p>
+    </el-card>
+  </div>
 </template>
 
 <style scoped></style>

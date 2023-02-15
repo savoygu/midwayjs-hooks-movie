@@ -51,7 +51,7 @@ function onCommentCreate(content: string) {
         </el-card>
       </el-col>
       <el-col :span="8">
-        <div class="flex flex-col leading-8">
+        <div class="flex flex-col leading-8 text-sm">
           <span>电影名字：{{ movie.title }}</span>
           <span>导演：{{ movie.doctor }}</span>
           <span>国家：{{ movie.country }}</span>
