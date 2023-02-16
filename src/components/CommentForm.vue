@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { FormInstance, FormRules } from 'element-plus';
-import { reactive, ref, toRefs } from 'vue';
+import { reactive, ref } from 'vue';
 
 // Props
 const props = withDefaults(
@@ -17,12 +17,10 @@ const props = withDefaults(
   }
 );
 
-const { loading, error, autofocus, initialValue } = toRefs(props);
-
 // State
 const commentFormRef = ref<FormInstance>();
 const commentForm = reactive({
-  content: initialValue.value,
+  content: props.initialValue,
 });
 const commentRules = reactive<FormRules>({
   content: [{ required: true, message: '评论不能为空', trigger: 'blur' }],
@@ -49,7 +47,7 @@ function submitComment() {
         <el-input
           v-model="commentForm.content"
           type="textarea"
-          :autofocus="autofocus"
+          :autofocus="props.autofocus"
           :rows="4"
           resize="none"
           class="rounded-tr-none rounded-br-none"
@@ -59,10 +57,10 @@ function submitComment() {
           class="w-20 !h-auto rounded-tl-none rounded-bl-none"
           @click="submitComment"
         >
-          {{ loading ? '评论中' : '评论' }}
+          {{ props.loading ? '评论中' : '评论' }}
         </el-button>
       </div>
-      <div>{{ error }}</div>
+      <div>{{ props.error }}</div>
     </el-form-item>
   </el-form>
 </template>

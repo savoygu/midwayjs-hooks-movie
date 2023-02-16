@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { User } from '@prisma/client';
 import { storeToRefs } from 'pinia';
 import { computed, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -25,6 +26,14 @@ const { user, q } = storeToRefs(userStore);
 function handleSearch() {
   router.push({ path: '/search', query: { q: q.value } });
 }
+function onSubmit(form: User) {
+  return signInApi(form).then(response => {
+    setTimeout(() => {
+      location.reload();
+    }, 500);
+    return response;
+  });
+}
 function resetSignIn() {
   openSignIn.value = false;
 }
@@ -36,6 +45,9 @@ async function onSignOut() {
     await signOutApi();
     userStore.save(null);
     showSuccess('登出成功');
+    setTimeout(() => {
+      location.reload();
+    }, 500);
   } catch (err) {
     showError(err?.data?.message ?? '登出失败');
   }
@@ -89,7 +101,7 @@ async function onSignOut() {
     </el-row>
   </div>
   <el-dialog v-model="openSignIn" title="登录" hide-footer>
-    <SignInForm :on-reset="resetSignIn" :on-submit="signInApi" />
+    <SignInForm :on-reset="resetSignIn" :on-submit="onSubmit" />
   </el-dialog>
   <el-dialog v-model="openSignUp" title="注册" hide-footer>
     <SignUpForm :on-reset="resetSignUp" :on-submit="signUpApi" />
