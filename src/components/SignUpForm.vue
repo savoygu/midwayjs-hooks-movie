@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import type { FormInstance, FormRules } from 'element-plus';
+import { ElButton, ElFormItem, ElInput } from 'element-plus';
 import { defineProps, reactive, ref } from 'vue';
 import type { User } from '@prisma/client';
-import { UserFormRules } from '../utils/FormRules';
-import { showError, showSuccess } from '../utils/ElMessage';
+import { UserFormRules } from '../utils/rules';
+import { showError, showSuccess } from '../utils/message';
 
 // Props
 const props = defineProps<{
@@ -68,31 +69,31 @@ function resetSignUp() {
 </script>
 
 <template>
-  <el-form
+  <ElForm
     ref="signUpFormRef"
     :model="signUpForm"
     :rules="signUpRules"
     label-width="120px"
     class="overflow-hidden"
   >
-    <el-form-item label="用户名" prop="name">
-      <el-input v-model="signUpForm.name"></el-input>
-    </el-form-item>
-    <el-form-item label="密码" prop="password">
-      <el-input
+    <ElFormItem label="用户名" prop="name">
+      <ElInput v-model="signUpForm.name"></ElInput>
+    </ElFormItem>
+    <ElFormItem label="密码" prop="password">
+      <ElInput
         v-model="signUpForm.password"
         type="password"
         autocomplete="off"
-      ></el-input>
-    </el-form-item>
-    <el-form-item label="确认密码" prop="repassword">
-      <el-input v-model="signUpForm.repassword" type="password"></el-input>
-    </el-form-item>
+      ></ElInput>
+    </ElFormItem>
+    <ElFormItem label="确认密码" prop="repassword">
+      <ElInput v-model="signUpForm.repassword" type="password"></ElInput>
+    </ElFormItem>
     <div class="float-right">
-      <el-button class="mr-2" @click="resetSignUp">关闭</el-button>
-      <el-button type="primary" @click="submitSignUp">提交</el-button>
+      <ElButton class="mr-2" @click="resetSignUp">关闭</ElButton>
+      <ElButton type="primary" @click="submitSignUp">提交</ElButton>
     </div>
-  </el-form>
+  </ElForm>
 </template>
 
 <style scoped></style>

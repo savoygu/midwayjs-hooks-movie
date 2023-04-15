@@ -59,31 +59,27 @@ function getMovies(page: number, size: number) {
 
 <template>
   <div class="w-[1200px] mx-auto">
-    <el-card shadow="never">
+    <ElCard shadow="never">
       <template #header>{{ searchResult.name }}</template>
       <template v-if="searchResult.movies.length > 0">
-        <el-row :gutter="16">
-          <el-col
-            v-for="movie in searchResult.movies"
-            :key="movie.id"
-            :span="4"
-          >
-            <el-image
+        <ElRow :gutter="16">
+          <ElCol v-for="movie in searchResult.movies" :key="movie.id" :span="4">
+            <ElImage
               class="w-full rounded"
               src="https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg"
               :alt="movie.title"
               fit="fill"
-            ></el-image>
+            ></ElImage>
             <h5>{{ movie.title }}</h5>
-            <el-button
+            <ElButton
               type="primary"
               @click="router.push({ name: 'Movie', params: { id: movie.id } })"
             >
               欢迎观看预告片
-            </el-button>
-          </el-col>
-        </el-row>
-        <el-pagination
+            </ElButton>
+          </ElCol>
+        </ElRow>
+        <ElPagination
           v-model:current-page="page"
           class="mt-4"
           :page-size="size"
@@ -96,7 +92,7 @@ function getMovies(page: number, size: number) {
         />
       </template>
       <p v-else class="text-center text-sm text-[#777]">暂无相关影片</p>
-    </el-card>
+    </ElCard>
   </div>
 </template>
 

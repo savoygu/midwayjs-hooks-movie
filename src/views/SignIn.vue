@@ -20,14 +20,14 @@ function onSubmit(form: User) {
 
 <template>
   <div class="flex items-center h-screen">
-    <el-row class="w-full flex justify-center">
-      <el-col :span="8">
-        <el-card>
+    <ElRow class="w-full flex justify-center">
+      <ElCol :span="8">
+        <ElCard>
           <template #header>登录</template>
-          <SignInForm :on-submit="onSubmit" />
-        </el-card>
-      </el-col>
-    </el-row>
+          <SignInForm :on-reset="() => router.back()" :on-submit="onSubmit" />
+        </ElCard>
+      </ElCol>
+    </ElRow>
   </div>
 </template>
 

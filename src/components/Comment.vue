@@ -12,7 +12,7 @@ import {
 } from '../api/comment';
 import { useMovieStore } from '../store/movie';
 import { useUserStore } from '../store/user';
-import { showError } from '../utils/ElMessage';
+import { showError } from '../utils/message';
 
 // Props
 const props = defineProps<{
@@ -58,8 +58,10 @@ function onCommentReply(content: string) {
       { params: { id: String(movie.value.id) } }
     )
     .then(comment => {
-      isReplying.value = false;
-      movieStore.createLocalComment(comment);
+      if (comment) {
+        isReplying.value = false;
+        movieStore.createLocalComment(comment);
+      }
     });
 }
 
@@ -119,28 +121,33 @@ function onToggleCommentLike() {
       autofocus
       :initial-value="comment.content"
       :loading="updateCommentState.isLoading.value"
-      :error="updateCommentState.error"
+      :error="updateCommentState.error.value"
       :on-submit="onCommentUpdate"
     />
     <div v-else class="mx-2 py-2 text-sm">{{ comment.content }}</div>
     <div class="flex mt-2">
-      <el-link
+      <ElLink
         :disabled="toggleCommentLikeState.isLoading.value"
         @click="onToggleCommentLike"
         >{{ user && comment.likedByMe ? '取消' : '' }}点赞
         {{ comment.likeCount }}
-      </el-link>
+      </ElLink>
       <span class="mx-2">|</span>
-      <el-link @click="isReplying = !isReplying">
+      <ElLink
+        @click="
+          isReplying = !isReplying;
+          createCommentState.error.value = null;
+        "
+      >
         {{ isReplying ? '取消' : '' }}回复
-      </el-link>
+      </ElLink>
       <template v-if="user && comment.user.id === user.id">
         <span class="mx-2">|</span>
-        <el-link @click="isEditing = !isEditing">
+        <ElLink @click="isEditing = !isEditing">
           {{ isEditing ? '取消' : '' }}编辑
-        </el-link>
+        </ElLink>
         <span class="mx-2">|</span>
-        <el-link type="danger" @click="onCommentDelete">删除</el-link>
+        <ElLink type="danger" @click="onCommentDelete">删除</ElLink>
       </template>
     </div>
     <div v-if="deleteCommentState.error.value" class="text-[#ff5757] mt-1">
@@ -152,7 +159,7 @@ function onToggleCommentLike() {
       autofocus
       :on-submit="onCommentReply"
       :loading="createCommentState.isLoading.value"
-      :error="createCommentState.error"
+      :error="createCommentState.error.value"
     />
   </div>
   <template v-if="childComments?.length > 0">
@@ -166,7 +173,7 @@ function onToggleCommentLike() {
       </div>
     </div>
     <div class="mt-1" :class="{ hidden: !areChildrenHidden }">
-      <el-button @click="areChildrenHidden = false"> 展示回复 </el-button>
+      <ElButton @click="areChildrenHidden = false"> 展示回复 </ElButton>
     </div>
   </template>
 </template>

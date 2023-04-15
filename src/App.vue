@@ -5,13 +5,13 @@ const locale = zhCn;
 </script>
 
 <template>
-  <el-config-provider size="default" :z-index="3000" :locale="locale">
+  <ElConfigProvider size="default" :z-index="3000" :locale="locale">
     <div class="app">
       <RouterView v-slot="{ Component }">
         <component :is="Component" class="pb-16" />
       </RouterView>
     </div>
-  </el-config-provider>
+  </ElConfigProvider>
 </template>
 
 <style></style>

@@ -41,28 +41,28 @@ function submitComment() {
 </script>
 
 <template>
-  <el-form ref="commentFormRef" :model="commentForm" :rules="commentRules">
-    <el-form-item prop="content">
+  <ElForm ref="commentFormRef" :model="commentForm" :rules="commentRules">
+    <ElFormItem prop="content">
       <div class="flex flex-1">
-        <el-input
+        <ElInput
           v-model="commentForm.content"
           type="textarea"
           :autofocus="props.autofocus"
           :rows="4"
           resize="none"
           class="rounded-tr-none rounded-br-none"
-        ></el-input>
-        <el-button
+        ></ElInput>
+        <ElButton
           type="primary"
           class="w-20 !h-auto rounded-tl-none rounded-bl-none"
           @click="submitComment"
         >
           {{ props.loading ? '评论中' : '评论' }}
-        </el-button>
+        </ElButton>
       </div>
-      <div>{{ props.error }}</div>
-    </el-form-item>
-  </el-form>
+    </ElFormItem>
+    <div class="text-[#ff5757] mt-1">{{ props.error?.data?.message }}</div>
+  </ElForm>
 </template>
 
 <style scoped></style>

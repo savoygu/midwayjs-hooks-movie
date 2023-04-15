@@ -3,8 +3,8 @@ import type { User } from '@prisma/client';
 import type { FormInstance, FormRules } from 'element-plus';
 import { reactive, ref } from 'vue';
 import { useUserStore } from '../store/user';
-import { showError, showSuccess } from '../utils/ElMessage';
-import { UserFormRules } from '../utils/FormRules';
+import { showError, showSuccess } from '../utils/message';
+import { UserFormRules } from '../utils/rules';
 
 // Props
 const props = defineProps<{
@@ -50,24 +50,24 @@ function resetSignIn() {
 </script>
 
 <template>
-  <el-form
+  <ElForm
     ref="signInFormRef"
     :model="signInForm"
     :rules="signInRules"
     label-width="120px"
     class="overflow-hidden"
   >
-    <el-form-item label="用户名" prop="name">
-      <el-input v-model="signInForm.name"></el-input>
-    </el-form-item>
-    <el-form-item label="密码" prop="password">
-      <el-input v-model="signInForm.password" type="password"></el-input>
-    </el-form-item>
+    <ElFormItem label="用户名" prop="name">
+      <ElInput v-model="signInForm.name"></ElInput>
+    </ElFormItem>
+    <ElFormItem label="密码" prop="password">
+      <ElInput v-model="signInForm.password" type="password"></ElInput>
+    </ElFormItem>
     <div class="float-right">
-      <el-button class="mr-2" @click="resetSignIn">关闭</el-button>
-      <el-button type="primary" @click="submitSignIn">提交</el-button>
+      <ElButton class="mr-2" @click="resetSignIn">关闭</ElButton>
+      <ElButton type="primary" @click="submitSignIn">提交</ElButton>
     </div>
-  </el-form>
+  </ElForm>
 </template>
 
 <style scoped></style>

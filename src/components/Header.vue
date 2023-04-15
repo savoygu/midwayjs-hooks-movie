@@ -9,7 +9,7 @@ import {
   signUp as signUpApi,
 } from '../api/user';
 import { useUserStore } from '../store/user';
-import { showError, showSuccess } from '../utils/ElMessage';
+import { showError, showSuccess } from '../utils/message';
 
 // State
 const openSignIn = ref(false);
@@ -58,29 +58,29 @@ async function onSignOut() {
   <div class="w-[1200px] mx-auto">
     <div class="page-header flex-1">
       <h2>{{ title }}</h2>
-      <el-row>
-        <el-col :span="8"><small>重度科幻迷</small></el-col>
-        <el-col :span="16">
+      <ElRow>
+        <ElCol :span="8"><small>重度科幻迷</small></ElCol>
+        <ElCol :span="16">
           <div class="flex justify-end">
             <div class="w-1/3 rounded-tr-none rounded-br-none">
-              <el-input v-model="q"></el-input>
+              <ElInput v-model="q"></ElInput>
             </div>
-            <el-button
+            <ElButton
               type="primary"
               class="w-20 rounded-tl-none rounded-bl-none"
               @click="handleSearch"
             >
               搜索
-            </el-button>
+            </ElButton>
           </div>
-        </el-col>
-      </el-row>
+        </ElCol>
+      </ElRow>
     </div>
   </div>
   <div
     class="fixed inset-x-0 bottom-0 z-50 bg-[#f8f8f8] border-t border-solid border-[#e7e7e7]"
   >
-    <el-row
+    <ElRow
       justify="space-between"
       align="middle"
       class="w-[1200px] mx-auto h-[50px]"
@@ -98,14 +98,14 @@ async function onSignOut() {
           <span class="cursor-pointer" @click="openSignIn = true">登录</span>
         </template>
       </div>
-    </el-row>
+    </ElRow>
   </div>
-  <el-dialog v-model="openSignIn" title="登录" hide-footer>
+  <ElDialog v-model="openSignIn" title="登录" hide-footer>
     <SignInForm :on-reset="resetSignIn" :on-submit="onSubmit" />
-  </el-dialog>
-  <el-dialog v-model="openSignUp" title="注册" hide-footer>
+  </ElDialog>
+  <ElDialog v-model="openSignUp" title="注册" hide-footer>
     <SignUpForm :on-reset="resetSignUp" :on-submit="signUpApi" />
-  </el-dialog>
+  </ElDialog>
 </template>
 
 <style lang="scss" scoped>

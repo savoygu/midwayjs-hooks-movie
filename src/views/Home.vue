@@ -23,7 +23,7 @@ getCategoriesMovies({ params: { id: 'all' } }).then(
 <template>
   <div class="w-[1200px] mx-auto">
     <template v-for="item in categories" :key="item.id">
-      <el-card class="mb-4" shadow="never">
+      <ElCard class="mb-4" shadow="never">
         <template #header>
           <span
             class="cursor-pointer"
@@ -31,9 +31,9 @@ getCategoriesMovies({ params: { id: 'all' } }).then(
             >{{ item.name }}</span
           >
         </template>
-        <el-row v-if="item.movies.length > 0" :gutter="16">
-          <el-col v-for="movie in item.movies" :key="movie.id" :span="4">
-            <el-image
+        <ElRow v-if="item.movies.length > 0" :gutter="16">
+          <ElCol v-for="movie in item.movies" :key="movie.id" :span="4">
+            <ElImage
               class="w-full rounded max-h-[160px]"
               :src="movie.poster"
               :alt="movie.title"
@@ -43,18 +43,18 @@ getCategoriesMovies({ params: { id: 'all' } }).then(
                   (movie.poster =
                     'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg')
               "
-            ></el-image>
+            ></ElImage>
             <h5>{{ movie.title }}</h5>
-            <el-button
+            <ElButton
               type="primary"
               @click="router.push({ name: 'Movie', params: { id: movie.id } })"
             >
               欢迎观看预告片
-            </el-button>
-          </el-col>
-        </el-row>
+            </ElButton>
+          </ElCol>
+        </ElRow>
         <p v-else class="text-center text-sm text-[#777]">暂无相关影片</p>
-      </el-card>
+      </ElCard>
     </template>
   </div>
 </template>

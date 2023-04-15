@@ -8,17 +8,17 @@ const router = useRouter();
 
 <template>
   <div class="flex items-center h-screen">
-    <el-row class="w-full flex justify-center">
-      <el-col :span="8">
-        <el-card>
+    <ElRow class="w-full flex justify-center">
+      <ElCol :span="8">
+        <ElCard>
           <template #header>注册</template>
           <SignUpForm
             :on-reset="() => router.push('/')"
             :on-submit="signUpApi"
           />
-        </el-card>
-      </el-col>
-    </el-row>
+        </ElCard>
+      </ElCol>
+    </ElRow>
   </div>
 </template>
 

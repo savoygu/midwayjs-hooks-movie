@@ -42,6 +42,7 @@ export const useMovieStore = defineStore('movie', {
       return this.commentsByParentId[parentId];
     },
     createLocalComment(comment) {
+      console.log('createLocalComment', comment);
       this.comments = [comment, ...this.comments];
     },
     updateLocalComment(id: number, content: string) {
