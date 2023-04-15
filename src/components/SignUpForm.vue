@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { FormInstance, FormRules } from 'element-plus';
 import { ElButton, ElFormItem, ElInput } from 'element-plus';
-import { defineProps, reactive, ref } from 'vue';
+import { reactive, ref } from 'vue';
 import type { User } from '@prisma/client';
 import { UserFormRules } from '../utils/rules';
 import { showError, showSuccess } from '../utils/message';
