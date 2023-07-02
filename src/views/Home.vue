@@ -58,5 +58,3 @@ getCategoriesMovies({ params: { id: 'all' } }).then(
     </template>
   </div>
 </template>
-
-<style lang="scss" scoped></style>

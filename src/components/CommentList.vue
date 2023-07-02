@@ -15,5 +15,3 @@ const props = defineProps<{
     <Comment :comment="comment" />
   </div>
 </template>
-
-<style scoped></style>

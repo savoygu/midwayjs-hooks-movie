@@ -13,5 +13,3 @@ const locale = zhCn;
     </div>
   </ElConfigProvider>
 </template>
-
-<style></style>

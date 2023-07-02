@@ -64,5 +64,3 @@ function onCommentCreate(content: string) {
     </ElRow>
   </div>
 </template>
-
-<style scoped></style>

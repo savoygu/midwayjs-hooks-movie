@@ -64,5 +64,3 @@ function submitComment() {
     <div class="text-[#ff5757] mt-1">{{ props.error?.data?.message }}</div>
   </ElForm>
 </template>
-
-<style scoped></style>

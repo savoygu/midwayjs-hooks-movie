@@ -95,5 +95,3 @@ function resetSignUp() {
     </div>
   </ElForm>
 </template>
-
-<style scoped></style>

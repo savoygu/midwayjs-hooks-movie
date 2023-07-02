@@ -30,5 +30,3 @@ function onSubmit(form: User) {
     </ElRow>
   </div>
 </template>
-
-<style scoped></style>

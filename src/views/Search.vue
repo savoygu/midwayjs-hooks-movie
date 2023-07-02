@@ -95,5 +95,3 @@ function getMovies(page: number, size: number) {
     </ElCard>
   </div>
 </template>
-
-<style scoped></style>

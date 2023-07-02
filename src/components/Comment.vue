@@ -177,5 +177,3 @@ function onToggleCommentLike() {
     </div>
   </template>
 </template>
-
-<style scoped></style>

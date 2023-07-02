@@ -69,5 +69,3 @@ function resetSignIn() {
     </div>
   </ElForm>
 </template>
-
-<style scoped></style>

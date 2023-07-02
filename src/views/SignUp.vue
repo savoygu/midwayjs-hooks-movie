@@ -21,5 +21,3 @@ const router = useRouter();
     </ElRow>
   </div>
 </template>
-
-<style scoped></style>
